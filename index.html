@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>減脂追蹤</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="減脂追蹤">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#1BA578">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+:root{
+  --bg:#F4F7F5;--panel:#FFFFFF;--fg:#17201B;--muted:#6B7A72;--line:#E3E9E5;
+  --accent:#1BA578;--accent-soft:#D4F1E5;--good:#138A5E;--warn:#C27C0E;--bad:#C2410C;--ref:#9AA9A1;
+}
+@media (prefers-color-scheme: dark){
+  :root{--bg:#0F1512;--panel:#18211C;--fg:#E8EFEA;--muted:#93A39A;--line:#26322B;--accent:#34C792;--accent-soft:#1D3A2E;--good:#4AD39C;--warn:#E7A93A;--bad:#F08A5D;--ref:#5E6E66}
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSystemFont,"PingFang HK","Noto Sans TC",sans-serif;-webkit-text-size-adjust:100%}
+.wrap{max-width:860px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 32px)}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:6px}
+h1{font-size:26px;font-weight:700;margin:0}
+.upd{font-size:12px;color:var(--muted)}
+.lead{color:var(--muted);font-size:15px;line-height:1.55;margin:4px 0 16px}
+.lead b{color:var(--fg)}
+.tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px}
+@media (min-width:640px){.tiles{grid-template-columns:repeat(3,1fr)}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px}
+.lab{font-size:12px;color:var(--muted)}
+.big{font-size:26px;font-weight:600;margin-top:4px;font-variant-numeric:tabular-nums}
+.big small{font-size:14px;font-weight:500;color:var(--muted)}
+.sub{font-size:12px;color:var(--muted);margin-top:4px}
+.section{margin-bottom:14px}
+h2{font-size:16px;font-weight:600;margin:0}
+.note{font-size:12px;color:var(--muted);margin:4px 0 10px}
+.chart{position:relative;width:100%}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.chart text{font-size:11px;fill:var(--muted)}
+.tip{position:absolute;background:var(--panel);border:1px solid var(--line);border-radius:8px;box-shadow:0 4px 14px rgba(0,0,0,.12);padding:6px 8px;font-size:12px;pointer-events:none;white-space:nowrap;display:none;z-index:2}
+.tip .d{color:var(--muted)}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
+th,td{padding:7px 6px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+th{font-size:11px;color:var(--muted);font-weight:500}
+th:first-child,td:first-child{text-align:left}
+tr.main td{border-bottom:none;padding-bottom:2px}
+td.txt{text-align:left;white-space:normal;color:var(--muted);font-size:12px;padding-top:0;line-height:1.45}
+.good{color:var(--good)}.warn{color:var(--warn)}.bad{color:var(--bad)}
+.tabs{display:flex;gap:6px;margin:0 0 10px}
+.tabs button{border:1px solid var(--line);background:var(--panel);color:var(--fg);border-radius:999px;padding:6px 12px;font-size:13px}
+.tabs button[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:#fff}
+.err{color:var(--bad);font-size:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>減脂追蹤</h1>
+    <span class="upd" id="upd"></span>
+  </header>
+  <p class="lead" id="lead">載入緊…</p>
+
+  <div class="tiles">
+    <div class="card"><div class="lab">累計熱量差</div><div class="big" id="tBal">—</div><div class="sub" id="tBalSub">負數 = 缺口</div></div>
+    <div class="card"><div class="lab">估計減咗脂肪</div><div class="big" id="tFat">—</div><div class="sub">7,700 kcal ≈ 1 kg</div></div>
+    <div class="card"><div class="lab">最新體重</div><div class="big" id="tW">—</div><div class="sub" id="tWSub">目標 54.6 kg</div></div>
+    <div class="card"><div class="lab">近 7 日平均體重</div><div class="big" id="tW7">—</div><div class="sub">比單日磅數準</div></div>
+    <div class="card"><div class="lab">平均每日熱量</div><div class="big" id="tK">—</div><div class="sub">目標約 1,350</div></div>
+    <div class="card"><div class="lab">平均每日蛋白質</div><div class="big" id="tP">—</div><div class="sub">目標 100 g（最低 90）</div></div>
+  </div>
+
+  <div class="card section" id="today-card">
+    <h2>今日</h2>
+    <p class="note" id="todayNote"></p>
+    <div class="tiles" style="margin:0;grid-template-columns:repeat(2,1fr)">
+      <div><div class="lab">已食</div><div class="big" id="tdK">—</div><div class="sub" id="tdKSub"></div></div>
+      <div><div class="lab">蛋白質</div><div class="big" id="tdP">—</div><div class="sub" id="tdPSub"></div></div>
+    </div>
+  </div>
+
+  <div class="card section">
+    <h2>每日熱量同蛋白質</h2>
+    <div class="tabs"><button data-m="kcal" aria-pressed="true">熱量</button><button data-m="protein" aria-pressed="false">蛋白質</button></div>
+    <p class="note" id="barNote">虛線：目標 1,350 同 TDEE 1,650；淺色 = 當日未完</p>
+    <div class="chart" id="bars"></div>
+  </div>
+
+  <div class="card section">
+    <h2>體重</h2>
+    <p class="note">點 = 每日磅數；線 = 7 日平均；虛線 = 目標 54.6 kg</p>
+    <div class="chart" id="wchart"></div>
+  </div>
+
+  <div class="card section">
+    <h2>每週回顧</h2>
+    <p class="note">週一開始；平均只計完整日子。達標 = 熱量 1,200–1,450 而且蛋白質 ≥ 90 g</p>
+    <div class="scroll"><table><thead><tr><th>週（由）</th><th>日數</th><th>平均熱量</th><th>平均蛋白質</th><th>熱量差</th><th>平均體重</th><th>達標日</th></tr></thead><tbody id="weekBody"></tbody></table></div>
+  </div>
+
+  <div class="card section">
+    <h2>每日紀錄</h2>
+    <p class="note">熱量同蛋白質係 Claude 按你報嘅食物估算，唔係精準數字</p>
+    <div class="scroll"><table><thead><tr><th>日期</th><th>熱量</th><th>蛋白質</th><th>熱量差</th><th>體重</th><th>熱/蛋</th></tr></thead><tbody id="dayBody"></tbody></table></div>
+  </div>
+</div>
+
+<script>
+const TDEE = 1650, TARGET = 1350, PROT = 100, PROT_MIN = 90, GOAL = 54.6, KG = 7700;
+const DAY = 864e5;
+const $ = (id) => document.getElementById(id);
+const f0 = (v) => Math.round(v).toLocaleString('en-US');
+const f1 = (v) => (Math.round(v * 10) / 10).toFixed(1);
+const signed = (v) => (v > 0 ? '+' : v < 0 ? '−' : '') + f0(Math.abs(v));
+const wk = '日一二三四五六';
+const md = (s) => { const t = new Date(s + 'T00:00:00Z'); return (t.getUTCMonth() + 1) + '/' + t.getUTCDate(); };
+const dayLabel = (s) => md(s) + ' (' + wk[new Date(s + 'T00:00:00Z').getUTCDay()] + ')';
+const setCls = (el, c) => { el.classList.remove('good', 'warn', 'bad'); if (c) el.classList.add(c); };
+let metric = 'kcal', DAYS = [];
+
+function prep(log) {
+  const rows = log.map((r) => {
+    const complete = r.complete === true || r.complete === 'true';
+    const weight = r.weight == null || r.weight === '' ? null : Number(r.weight);
+    return {date: String(r.date).slice(0, 10), kcal: Number(r.kcal) || 0, protein: Number(r.protein) || 0, weight, complete, note: r.note || '',
+      balance: complete ? (Number(r.kcal) || 0) - TDEE : null};
+  }).sort((a, b) => (a.date < b.date ? -1 : 1));
+  for (const d of rows) {
+    const t = Date.parse(d.date);
+    const w = rows.filter((x) => x.weight != null && Date.parse(x.date) <= t && t - Date.parse(x.date) < 7 * DAY);
+    d.avg7 = w.length ? w.reduce((s, x) => s + x.weight, 0) / w.length : null;
+  }
+  return rows;
+}
+
+function summary(days) {
+  const c = days.filter((d) => d.complete);
+  const sum = (a, f) => a.reduce((s, d) => s + f(d), 0);
+  const bal = sum(c, (d) => d.balance);
+  const ws = days.filter((d) => d.weight != null);
+  const lw = ws[ws.length - 1], first = ws[0];
+  return {n: c.length, bal, fat: -bal / KG, avgK: c.length ? sum(c, (d) => d.kcal) / c.length : null,
+    avgP: c.length ? sum(c, (d) => d.protein) / c.length : null, lw, first, w7: lw ? lw.avg7 : null};
+}
+
+function weekly(days) {
+  const g = new Map();
+  for (const d of days) {
+    const t = new Date(d.date + 'T00:00:00Z');
+    const k = new Date(t.getTime() - ((t.getUTCDay() + 6) % 7) * DAY).toISOString().slice(0, 10);
+    if (!g.has(k)) g.set(k, []);
+    g.get(k).push(d);
+  }
+  const s = (a, f) => a.reduce((p, d) => p + f(d), 0);
+  return [...g].map(([week, a]) => {
+    const c = a.filter((d) => d.complete), w = a.filter((d) => d.weight != null);
+    return {week, n: c.length, avgK: c.length ? s(c, (d) => d.kcal) / c.length : null, avgP: c.length ? s(c, (d) => d.protein) / c.length : null,
+      bal: s(c, (d) => d.balance), avgW: w.length ? s(w, (d) => d.weight) / w.length : null,
+      hit: c.filter((d) => d.kcal >= 1200 && d.kcal <= 1450 && d.protein >= PROT_MIN).length};
+  }).sort((a, b) => (a.week < b.week ? 1 : -1));
+}
+
+const NS = 'http://www.w3.org/2000/svg';
+function el(tag, attrs, parent, text) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (text != null) e.textContent = text;
+  if (parent) parent.appendChild(e);
+  return e;
+}
+function niceMax(v) { const p = Math.pow(10, Math.floor(Math.log10(v))); const m = v / p; return (m <= 1 ? 1 : m <= 2 ? 2 : m <= 2.5 ? 2.5 : m <= 5 ? 5 : 10) * p; }
+function textW(svg, s) { const t = el('text', {x: -999, y: -999}, svg, s); const w = t.getComputedTextLength(); t.remove(); return w; }
+function tipper(box) {
+  let tip = box.querySelector('.tip');
+  if (!tip) { tip = document.createElement('div'); tip.className = 'tip'; box.appendChild(tip); }
+  return {
+    show(ev, lines) {
+      tip.replaceChildren(...lines.map((l, i) => { const d = document.createElement('div'); if (i === 0) d.className = 'd'; d.textContent = l; return d; }));
+      tip.style.display = 'block';
+      const b = box.getBoundingClientRect(), p = ev.touches ? ev.touches[0] : ev;
+      let x = p.clientX - b.left + 10, y = p.clientY - b.top - tip.offsetHeight - 10;
+      if (x + tip.offsetWidth > box.clientWidth) x = box.clientWidth - tip.offsetWidth;
+      if (y < 0) y = p.clientY - b.top + 14;
+      tip.style.left = Math.max(0, x) + 'px'; tip.style.top = y + 'px';
+    },
+    hide() { tip.style.display = 'none'; }
+  };
+}
+
+function drawBars() {
+  const box = $('bars'); box.querySelectorAll('svg').forEach((s) => s.remove());
+  const rows = DAYS; if (!rows.length) return;
+  const refs = metric === 'kcal' ? [{v: TARGET, l: '目標 ' + f0(TARGET)}, {v: TDEE, l: 'TDEE ' + f0(TDEE)}] : [{v: PROT, l: '目標 ' + PROT + 'g'}];
+  $('barNote').textContent = metric === 'kcal' ? '虛線：目標 1,350 同 TDEE 1,650；淺色 = 當日未完' : '虛線：目標 100 g；淺色 = 當日未完';
+  const W = Math.max(300, box.clientWidth), H = 210, mt = 10, mb = 22;
+  const svg = el('svg', {viewBox: `0 0 ${W} ${H}`}); box.prepend(svg);
+  const max = niceMax(Math.max(...rows.map((r) => r[metric]), ...refs.map((r) => r.v)) * 1.08);
+  const ticks = [0, 1, 2, 3, 4].map((i) => (max / 4) * i);
+  const ml = Math.max(...ticks.map((t) => textW(svg, f0(t)))) + 8;
+  const mr = Math.max(...refs.map((r) => textW(svg, r.l))) + 8;
+  const y = (v) => H - mb - (v / max) * (H - mb - mt);
+  const iw = W - ml - mr, band = iw / rows.length, bw = Math.min(28, band * 0.7);
+  for (const t of ticks) {
+    el('line', {x1: ml, x2: W - mr, y1: y(t), y2: y(t), stroke: 'var(--line)'}, svg);
+    el('text', {x: ml - 6, y: y(t) + 4, 'text-anchor': 'end'}, svg, f0(t));
+  }
+  const tip = tipper(box);
+  rows.forEach((r, i) => {
+    const x = ml + band * i + (band - bw) / 2;
+    const rect = el('rect', {x, width: bw, y: y(r[metric]), height: Math.max(0, y(0) - y(r[metric])), rx: 4, fill: 'var(--accent)', opacity: r.complete ? 1 : 0.35}, svg);
+    const hit = el('rect', {x: ml + band * i, width: band, y: mt, height: H - mb - mt, fill: 'transparent'}, svg);
+    const show = (ev) => tip.show(ev, [dayLabel(r.date) + (r.complete ? '' : '・未完'), f0(r[metric]) + (metric === 'kcal' ? ' kcal' : ' g')]);
+    hit.addEventListener('mousemove', show); hit.addEventListener('touchstart', show, {passive: true});
+    hit.addEventListener('mouseleave', () => tip.hide());
+  });
+  refs.forEach((r) => {
+    el('line', {x1: ml, x2: W - mr, y1: y(r.v), y2: y(r.v), stroke: 'var(--ref)', 'stroke-dasharray': '4 3'}, svg);
+    el('text', {x: W - mr + 4, y: y(r.v) + 4}, svg, r.l);
+  });
+  const step = Math.max(1, Math.ceil(rows.length / Math.max(1, iw / 40)));
+  rows.forEach((r, i) => { if (i % step === 0) el('text', {x: ml + band * i + band / 2, y: H - 6, 'text-anchor': 'middle'}, svg, md(r.date)); });
+}
+
+function drawWeight() {
+  const box = $('wchart'); box.querySelectorAll('svg,.empty').forEach((s) => s.remove());
+  const pts = DAYS.filter((d) => d.weight != null).map((d) => ({...d, t: Date.parse(d.date)}));
+  if (!pts.length) { const p = document.createElement('p'); p.className = 'note empty'; p.textContent = '未有體重紀錄'; box.appendChild(p); return; }
+  const W = Math.max(300, box.clientWidth), H = 210, mt = 10, mb = 22;
+  const svg = el('svg', {viewBox: `0 0 ${W} ${H}`}); box.prepend(svg);
+  const vals = [...pts.map((p) => p.weight), GOAL];
+  const lo = Math.floor((Math.min(...vals) - 0.3) * 2) / 2, hi = Math.ceil((Math.max(...vals) + 0.3) * 2) / 2;
+  const ticks = []; const stepT = (hi - lo) > 4 ? 1 : 0.5; for (let v = lo; v <= hi + 1e-9; v += stepT) ticks.push(v);
+  const ml = Math.max(...ticks.map((t) => textW(svg, f1(t)))) + 8, gl = '目標 ' + GOAL, mr = textW(svg, gl) + 8;
+  const t0 = pts[0].t - DAY, t1 = pts[pts.length - 1].t + DAY;
+  const x = (t) => ml + ((t - t0) / (t1 - t0)) * (W - ml - mr);
+  const y = (v) => H - mb - ((v - lo) / (hi - lo)) * (H - mb - mt);
+  for (const t of ticks) { el('line', {x1: ml, x2: W - mr, y1: y(t), y2: y(t), stroke: 'var(--line)'}, svg); el('text', {x: ml - 6, y: y(t) + 4, 'text-anchor': 'end'}, svg, f1(t)); }
+  el('line', {x1: ml, x2: W - mr, y1: y(GOAL), y2: y(GOAL), stroke: 'var(--ref)', 'stroke-dasharray': '4 3'}, svg);
+  el('text', {x: W - mr + 4, y: y(GOAL) + 4}, svg, gl);
+  if (pts.length > 1) el('path', {d: pts.map((p, i) => (i ? 'L' : 'M') + x(p.t) + ' ' + y(p.avg7)).join(''), fill: 'none', stroke: 'var(--accent)', 'stroke-width': 2.5, 'stroke-linecap': 'round', 'stroke-linejoin': 'round'}, svg);
+  const tip = tipper(box);
+  pts.forEach((p) => {
+    el('circle', {cx: x(p.t), cy: y(p.weight), r: 4.5, fill: 'var(--panel)', stroke: 'var(--accent)', 'stroke-width': 2}, svg);
+    const h = el('circle', {cx: x(p.t), cy: y(p.weight), r: 16, fill: 'transparent'}, svg);
+    const show = (ev) => tip.show(ev, [dayLabel(p.date), '體重 ' + f1(p.weight) + ' kg', '7 日平均 ' + f1(p.avg7) + ' kg']);
+    h.addEventListener('mousemove', show); h.addEventListener('touchstart', show, {passive: true}); h.addEventListener('mouseleave', () => tip.hide());
+  });
+  const n = Math.max(2, Math.floor((W - ml - mr) / 60)), span = (t1 - t0) / DAY, every = Math.max(1, Math.ceil(span / n));
+  for (let t = t0 + DAY; t < t1; t += every * DAY) el('text', {x: x(t), y: H - 6, 'text-anchor': 'middle'}, svg, md(new Date(t).toISOString().slice(0, 10)));
+}
+
+function td(tr, text, cls) { const c = document.createElement('td'); c.textContent = text; if (cls) c.className = cls; tr.appendChild(c); }
+
+function render(log, meta) {
+  DAYS = prep(log);
+  const S = summary(DAYS);
+  if (meta && meta.updated) { const u = new Date(meta.updated); $('upd').textContent = '更新：' + (u.getMonth() + 1) + '/' + u.getDate() + ' ' + String(u.getHours()).padStart(2, '0') + ':' + String(u.getMinutes()).padStart(2, '0'); }
+
+  const toGoal = S.lw ? S.lw.weight - GOAL : null;
+  $('lead').innerHTML = '';
+  const parts = [['開始記錄至今累計熱量差 '], [signed(S.bal), true], [' kcal，約等於 '], [(S.fat).toFixed(2), true], [' kg 脂肪']];
+  if (S.lw) parts.push(['；最新體重 '], [f1(S.lw.weight), true], [' kg，距離目標仲有 '], [f1(Math.max(0, toGoal)), true], [' kg。']); else parts.push(['。']);
+  for (const [t, b] of parts) { const n = b ? document.createElement('b') : document.createTextNode(t); if (b) n.textContent = t; $('lead').appendChild(n); }
+
+  $('tBal').textContent = signed(S.bal); setCls($('tBal'), S.bal < 0 ? 'good' : S.bal > 0 ? 'bad' : null);
+  $('tBalSub').textContent = '負數 = 缺口・' + S.n + ' 日完整紀錄';
+  $('tFat').innerHTML = ''; $('tFat').append(S.fat.toFixed(2) + ' '); const s1 = document.createElement('small'); s1.textContent = 'kg'; $('tFat').append(s1);
+  const kg = (id, v) => { $(id).innerHTML = ''; if (v == null) { $(id).textContent = '—'; return; } $(id).append(f1(v) + ' '); const s = document.createElement('small'); s.textContent = 'kg'; $(id).append(s); };
+  kg('tW', S.lw ? S.lw.weight : null); kg('tW7', S.w7);
+  if (S.lw && S.first && S.first !== S.lw) { const d = S.lw.weight - S.first.weight; $('tWSub').textContent = '目標 54.6・比 ' + md(S.first.date) + ' ' + (d > 0 ? '+' : d < 0 ? '−' : '') + f1(Math.abs(d)); }
+  $('tK').textContent = S.avgK == null ? '—' : f0(S.avgK); setCls($('tK'), S.avgK == null ? null : S.avgK < 1200 ? 'warn' : S.avgK > 1450 ? 'bad' : 'good');
+  $('tP').innerHTML = ''; if (S.avgP == null) $('tP').textContent = '—'; else { $('tP').append(f0(S.avgP) + ' '); const s = document.createElement('small'); s.textContent = 'g'; $('tP').append(s); }
+  setCls($('tP'), S.avgP == null ? null : S.avgP >= PROT_MIN ? 'good' : 'warn');
+
+  const today = DAYS.filter((d) => !d.complete).pop();
+  if (today) {
+    $('today-card').style.display = '';
+    $('todayNote').textContent = dayLabel(today.date) + (today.note ? '・' + today.note : '');
+    $('tdK').textContent = f0(today.kcal) + ' kcal';
+    $('tdKSub').textContent = '仲有約 ' + f0(Math.max(0, TARGET - today.kcal)) + ' kcal';
+    $('tdP').textContent = f0(today.protein) + ' g';
+    $('tdPSub').textContent = today.protein >= PROT ? '已達標' : '仲差 ' + f0(PROT - today.protein) + ' g';
+  } else $('today-card').style.display = 'none';
+
+  drawBars(); drawWeight();
+
+  const wb = $('weekBody'); wb.replaceChildren();
+  for (const r of weekly(DAYS)) {
+    const tr = document.createElement('tr');
+    td(tr, md(r.week)); td(tr, r.n); td(tr, r.avgK == null ? '—' : f0(r.avgK)); td(tr, r.avgP == null ? '—' : f0(r.avgP) + ' g', r.avgP == null ? null : r.avgP >= PROT_MIN ? 'good' : 'warn');
+    td(tr, signed(r.bal), r.bal < 0 ? 'good' : r.bal > 0 ? 'bad' : null); td(tr, r.avgW == null ? '—' : f1(r.avgW)); td(tr, r.hit);
+    wb.appendChild(tr);
+  }
+  const db = $('dayBody'); db.replaceChildren();
+  for (const r of [...DAYS].reverse()) {
+    const tr = document.createElement('tr');
+    const rating = r.complete ? (r.kcal >= 1200 && r.kcal <= 1450 ? '✅' : '⚠️') + (r.protein >= PROT_MIN ? '✅' : '⚠️') : '進行中';
+    td(tr, dayLabel(r.date)); td(tr, f0(r.kcal)); td(tr, f0(r.protein) + ' g', r.complete ? (r.protein >= PROT_MIN ? 'good' : 'warn') : null);
+    td(tr, r.balance == null ? '—' : signed(r.balance), r.balance == null ? null : r.balance < 0 ? 'good' : 'bad');
+    td(tr, r.weight == null ? '—' : f1(r.weight)); td(tr, rating);
+    tr.className = 'main'; db.appendChild(tr);
+    const tr2 = document.createElement('tr'); const c = document.createElement('td'); c.colSpan = 6; c.className = 'txt'; c.textContent = r.note || '—'; tr2.appendChild(c); db.appendChild(tr2);
+  }
+}
+
+document.querySelectorAll('.tabs button').forEach((b) => b.addEventListener('click', () => {
+  metric = b.dataset.m;
+  document.querySelectorAll('.tabs button').forEach((x) => x.setAttribute('aria-pressed', x === b));
+  drawBars();
+}));
+let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (DAYS.length) { drawBars(); drawWeight(); } }, 150); });
+
+async function load() {
+  try {
+    const res = await fetch('data.json?t=' + Date.now(), {cache: 'no-store'});
+    const j = await res.json();
+    render(Array.isArray(j) ? j : j.days, Array.isArray(j) ? null : j);
+  } catch (e) {
+    $('lead').innerHTML = ''; const p = document.createElement('span'); p.className = 'err'; p.textContent = '載入唔到紀錄，遲啲再試。'; $('lead').appendChild(p);
+  }
+}
+load();
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') load(); });
+</script>
+</body>
+</html>

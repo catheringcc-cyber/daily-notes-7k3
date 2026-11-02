@@ -1,1 +1,1 @@
-# daily-notes-7k3
+# daily-notes

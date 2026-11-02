@@ -1,0 +1,61 @@
+{
+ "updated": "2026-11-02T03:33:00Z",
+ "days": [
+  {
+   "date": "2026-10-27",
+   "kcal": 2040,
+   "protein": 126,
+   "weight": null,
+   "complete": true,
+   "note": "latte、海南雞飯半飯+無糖豆漿、蛋+豬展湯、牛肉pho"
+  },
+  {
+   "date": "2026-10-28",
+   "kcal": 1400,
+   "protein": 80,
+   "weight": null,
+   "complete": true,
+   "note": "latte、豬展湯+無糖豆漿、M記安格斯(去一塊包)+中薯+無糖可樂；啤酒未確認未計"
+  },
+  {
+   "date": "2026-10-29",
+   "kcal": 1650,
+   "protein": 83,
+   "weight": null,
+   "complete": true,
+   "note": "海南雞飯半飯雞胸、豬頸肉/焗薯/蝦/燒肉/粉絲、半罐粟米；早餐未記錄"
+  },
+  {
+   "date": "2026-10-30",
+   "kcal": 1260,
+   "protein": 72,
+   "weight": null,
+   "complete": true,
+   "note": "吞拿魚醬餅+latte、薯仔甘筍菜心蝦、酒釀蛋、排骨+2蛋；啤酒未確認未計"
+  },
+  {
+   "date": "2026-10-31",
+   "kcal": 1410,
+   "protein": 66,
+   "weight": null,
+   "complete": true,
+   "note": "牛奶酒釀蛋花、炒蛋、餅、大閘蟹2隻、巨罐啤酒、花生湯圓5粒+酒釀+蛋花"
+  },
+  {
+   "date": "2026-11-01",
+   "kcal": 2070,
+   "protein": 81,
+   "weight": 56.2,
+   "complete": true,
+   "note": "早：酒釀2匙+桂花蜜、全脂奶300ml+2 shot espresso；吞拿魚醬餅、花生湯圓5粒+酒釀+蛋花、豬肉魷魚湯1碗（只食一塊魷魚）；晚：大閘蟹2隻(7兩)、炒蛋2隻、大罐啤酒2罐、Kumo Kumo芝士蛋糕1/4"
+  },
+  {
+   "date": "2026-11-02",
+   "kcal": 420,
+   "protein": 15,
+   "weight": 56.8,
+   "complete": false,
+   "note": "午：$10腸粉+無糖豆漿；早餐未報"
+  }
+ ]
+}
